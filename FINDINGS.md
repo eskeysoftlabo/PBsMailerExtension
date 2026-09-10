@@ -451,10 +451,14 @@ The `addOnIndex` is the manager's own enumeration index, so it comes from the sa
 reload or a logout -- not as letters are saved, so there is nothing to poll: reading them when
 the mail window opens is enough.
 
-Where the line goes: both the inbox and the send page inset their own view 120 pixels from the
-bottom of the right-hand pane's container, so that strip is empty on every tab. The line is a
-fragment on the mail scene rather than on a tab, which puts it on the inbox and the send page
-too.
+Where the line goes: on the button prompts' own row. `ZO_KeybindStripControl` is a top-level
+control 55 pixels tall spanning the bottom of `GuiRoot`, so anchoring `RIGHT` to its `RIGHT`
+puts the line beside the prompts at whatever height the strip is. It has to be drawn above the
+strip, though -- `ZO_KeybindStripGamepadBackground` is a full-width texture along that row, and
+anything at the mail screen's own draw tier ends up behind it.
+
+The line is a fragment on the mail scene rather than on a tab, which puts it on the inbox and
+the send page too, and takes it away with the mail window.
 
 ---
 

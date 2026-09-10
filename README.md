@@ -4,7 +4,7 @@ Adds the three mail boxes the game does not have — **Drafts**, **Sent** and **
 Elder Scrolls Online.
 
 - **Author:** PinkBanther
-- **Version:** 1.9.0
+- **Version:** 1.9.1
 - **Requires:** nothing. `LibHarvensAddonSettings` >= 20106 is optional and adds the settings
   panel; without it the same two settings are on `/pbmail max`.
 
@@ -41,7 +41,8 @@ cleared. The interval is a setting, and 0 turns it off.
 it goes — a draft is a letter you have not sent yet, and the sent box has the copy. That is a
 setting too, for anybody who would rather keep the wording.
 
-**How much room is left.** Along the bottom of the mail window: how much of the console's
+**How much room is left.** On the button-prompt row at the bottom of the screen, to the right
+of the prompts: how much of the console's
 add-on storage allowance is free, and how much of it this add-on is using. Three boxes of
 letters is a thing that grows, and the allowance is shared with every other add-on. It turns red
 under a tenth left. `/pbmail disk` says the same.

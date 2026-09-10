@@ -62,9 +62,9 @@ addon.gamepadUI = gamepad
 -- ---------------------------------------------------------------------------------------
 -- The line along the bottom
 --
--- How much room is left for saved data, in the space the mail window leaves empty at the
--- bottom of its right-hand pane. Its fragment goes on the scene rather than on a tab, so it is
--- there on the inbox and the send page too.
+-- How much room is left for saved data, on the same row as the button prompts at the bottom of
+-- the screen and to the right of them. Its fragment goes on the scene rather than on a tab, so
+-- it is there on the inbox and the send page too, and it goes away with the mail window.
 --
 -- The figures are what is on disk and only move when the game writes saved variables out, so
 -- there is nothing to poll: it is filled in when the mail window opens.
@@ -80,18 +80,32 @@ local function BuildStorageLine()
 
 	local built = {}
 	local ok = pcall(function()
-		local pane = CreateControlFromVirtual("PBsMailerExtensionStorage", ZO_Mail_Gamepad_TopLevel, "ZO_GamepadGrid_NavQuadrant_2_3_4_Anchors")
-		local container = CreateControlFromVirtual("$(parent)Container", pane, "ZO_GamepadGrid_NavQuadrant_ContainerAnchors")
-
-		local line = CreateControlFromVirtual("$(parent)Line", container, "PBsMailerExtension_Storage_Gamepad")
+		local line = CreateControlFromVirtual("PBsMailerExtensionStorage", ZO_Mail_Gamepad_TopLevel, "PBsMailerExtension_Storage_Gamepad")
 		line:ClearAnchors()
-		line:SetAnchor(BOTTOMLEFT, container, BOTTOMLEFT, 0, -8)
-		line:SetAnchor(BOTTOMRIGHT, container, BOTTOMRIGHT, 0, -8)
+
+		-- On the button prompts' own row, ending at the right edge. ZO_KeybindStripControl is
+		-- the full-width control at the bottom of the screen that the prompts sit in, so its
+		-- right edge is theirs, and anchoring to it puts this beside them at whatever height
+		-- the strip happens to be.
+		--
+		-- The right inset is the one the mail window gives its own right-hand pane.
+		if ZO_KeybindStripControl then
+			line:SetAnchor(RIGHT, ZO_KeybindStripControl, RIGHT, -30, 0)
+			-- The strip draws its background over the screen it is on, so this has to be
+			-- drawn above it or it would be behind that background.
+			if line.SetDrawTier and DT_HIGH then
+				line:SetDrawTier(DT_HIGH)
+			end
+		else
+			-- No strip to sit beside: the empty strip along the bottom of the right-hand pane,
+			-- which is where this used to live.
+			line:SetAnchor(BOTTOMRIGHT, ZO_Mail_Gamepad_TopLevel, BOTTOMRIGHT, -30, -70)
+		end
 
 		built.text = line:GetNamedChild("Text")
 		assert(built.text)
 
-		built.fragment = ZO_FadeSceneFragment:New(pane)
+		built.fragment = ZO_FadeSceneFragment:New(line)
 	end)
 
 	if not ok or not built.fragment then

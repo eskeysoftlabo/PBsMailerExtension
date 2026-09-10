@@ -4,7 +4,7 @@ Adds the three mail boxes the game does not have — **Drafts**, **Sent** and **
 Elder Scrolls Online.
 
 - **Author:** PinkBanther
-- **Version:** 1.9.1
+- **Version:** 1.9.2
 - **Requires:** nothing. `LibHarvensAddonSettings` >= 20106 is optional and adds the settings
   panel; without it the same two settings are on `/pbmail max`.
 

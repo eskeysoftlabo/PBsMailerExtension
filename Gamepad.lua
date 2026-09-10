@@ -105,6 +105,12 @@ local function BuildStorageLine()
 		built.text = line:GetNamedChild("Text")
 		assert(built.text)
 
+		-- White, and set here rather than left to the template. ZO_Mail_Gamepad_Label is the
+		-- mail window's heading face, and its colour is INTERFACE_TEXT_COLOR_DISABLED -- a grey
+		-- meant for a heading sitting on the window's own dark panel. On the button prompts'
+		-- row it sits on the strip's background instead, and disappears into it.
+		built.text:SetColor(1, 1, 1, 1)
+
 		built.fragment = ZO_FadeSceneFragment:New(line)
 	end)
 

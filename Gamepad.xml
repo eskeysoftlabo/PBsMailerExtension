@@ -79,6 +79,10 @@
             The line along the bottom of the mail window, on the same row as the button prompts
             and to the right of them. It is right aligned and wide enough for the longest form
             of the text, so what it says ends at the same inset the mail window uses.
+
+            The face comes from ZO_Mail_Gamepad_Label for its size; its colour does not. That
+            template is grey, for a heading on the window's own dark panel, and this sits on the
+            keybind strip's background where grey disappears. The colour is set in Lua.
         -->
         <Control name="PBsMailerExtension_Storage_Gamepad" virtual="true">
             <Dimensions x="900" y="32"/>

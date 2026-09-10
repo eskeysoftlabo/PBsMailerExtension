@@ -4,7 +4,7 @@ Adds the three mail boxes the game does not have — **Drafts**, **Sent** and **
 Elder Scrolls Online.
 
 - **Author:** PinkBanther
-- **Version:** 1.8.0
+- **Version:** 1.9.0
 - **Requires:** nothing. `LibHarvensAddonSettings` >= 20106 is optional and adds the settings
   panel; without it the same two settings are on `/pbmail max`.
 
@@ -40,6 +40,11 @@ cleared. The interval is a setting, and 0 turns it off.
 **Once it is sent.** A letter put on the page from the drafts box takes its draft with it when
 it goes — a draft is a letter you have not sent yet, and the sent box has the copy. That is a
 setting too, for anybody who would rather keep the wording.
+
+**How much room is left.** Along the bottom of the mail window: how much of the console's
+add-on storage allowance is free, and how much of it this add-on is using. Three boxes of
+letters is a thing that grows, and the allowance is shared with every other add-on. It turns red
+under a tenth left. `/pbmail disk` says the same.
 
 **Putting one back.** Picking a letter in either tab writes it onto the compose page and then
 asks you to go to the **Send** tab yourself. That last step is not laziness: the add-on making
@@ -85,6 +90,7 @@ Send yourself, exactly as you do now.
 | `/pbmail max drafts <n>` \| `sent <n>` \| `keep <n>` | change it — any figure from 1 to 1000 |
 | `/pbmail autosave <seconds>` \| `off` | how often the letter you are writing is saved |
 | `/pbmail onsend on` \| `off` | delete a draft once its letter is sent |
+| `/pbmail disk` | how much room is left for saved add-on data |
 | `/pbmail where` | whether the add-on can see the Send page, and whether the tabs went in |
 
 `/pbm` is the short form of all of them.

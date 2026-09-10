@@ -161,6 +161,13 @@ local strings = {
 
 	SI_PBSMX_HELP_AUTOSAVE = "/pbmail autosave [秒|off] -- 作成中メールの自動保存",
 	SI_PBSMX_HELP_ONSEND = "/pbmail onsend [on|off] -- 送信したら元の下書きを削除",
+
+	-- ---- 保存領域の空き ----------------------------------------------------------------
+	SI_PBSMX_STORAGE_FREE = "アドオン保存領域 空き %s MB / %s MB",
+	SI_PBSMX_STORAGE_USED = "アドオン保存領域 使用 %s MB",
+	SI_PBSMX_STORAGE_MINE = "（本アドオン %s MB）",
+	SI_PBSMX_STORAGE_UNKNOWN = "このクライアントはアドオン保存領域の空きを返しません。",
+	SI_PBSMX_HELP_DISK = "/pbmail disk -- アドオン保存領域の空き容量",
 }
 
 for stringId, stringValue in pairs(strings) do

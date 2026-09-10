@@ -74,5 +74,19 @@
                 </Control>
             </Controls>
         </Control>
+
+        <!--
+            The line along the bottom of the mail window. Both the inbox and the send page inset
+            their own view by 120 from the bottom of this container, so this sits in space the
+            mail window leaves empty on every tab.
+        -->
+        <Control name="PBsMailerExtension_Storage_Gamepad" virtual="true">
+            <Dimensions y="32"/>
+            <Controls>
+                <Label name="$(parent)Text" inherits="ZO_Mail_Gamepad_Label" horizontalAlignment="RIGHT" verticalAlignment="CENTER">
+                    <AnchorFill/>
+                </Label>
+            </Controls>
+        </Control>
     </Controls>
 </GuiXml>

@@ -162,6 +162,13 @@ local strings = {
 
 	SI_PBSMX_HELP_AUTOSAVE = "/pbmail autosave [seconds | off] -- saving the letter you are writing",
 	SI_PBSMX_HELP_ONSEND = "/pbmail onsend [on | off] -- delete a draft once its letter is sent",
+
+	-- ---- Room left for saved data ------------------------------------------------------
+	SI_PBSMX_STORAGE_FREE = "Add-on storage: %s MB free of %s MB",
+	SI_PBSMX_STORAGE_USED = "Add-on storage in use: %s MB",
+	SI_PBSMX_STORAGE_MINE = "(this add-on %s MB)",
+	SI_PBSMX_STORAGE_UNKNOWN = "This client does not say how much add-on storage is left.",
+	SI_PBSMX_HELP_DISK = "/pbmail disk -- how much room is left for saved add-on data",
 }
 
 for stringId, stringValue in pairs(strings) do

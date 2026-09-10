@@ -233,7 +233,11 @@ function Screen:Refresh()
 		end
 	end
 
-	self.footer:SetText(Paint(COLOUR_DIM, Format(SI_PBSMX_PAGE_OF, self.page, pages)))
+	-- The page number on the left, how much room is left for saved data on the right of the
+	-- same line. The keyboard window has no bottom strip of its own to put it in.
+	local line, low = addon:StorageLine()
+	self.footer:SetText(Paint(COLOUR_DIM, Format(SI_PBSMX_PAGE_OF, self.page, pages)) ..
+		(line and ("   " .. (low and ("|cC74A4A" .. line .. "|r") or Paint(COLOUR_DIM, line))) or ""))
 
 	local chosen = self.selected and all[self.selected] or nil
 	self.body:SetText(chosen and self.box:Preview(chosen) or Paint(COLOUR_DIM, GetString(SI_PBSMX_PICK_ONE)))

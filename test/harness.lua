@@ -93,12 +93,29 @@ function ManifestLine(field)
 	return found
 end
 
+-- The add-on manager, including the disk figures. They are methods on the manager rather than
+-- global functions, which is the thing worth getting right here.
+StorageCapacityMB = 5
+StorageUsedMB = 1.25
+StorageMineMB = 0.25
+StorageAnswers = true
+
 function GetAddOnManager()
+	if not StorageAnswers then
+		return {
+			GetNumAddOns = function() return 1 end,
+			GetAddOnInfo = function(_, i) return "PBsMailerExtension", ManifestLine("Title") end,
+		}
+	end
+
 	return {
 		GetNumAddOns = function() return 1 end,
 		GetAddOnInfo = function(_, i)
 			return "PBsMailerExtension", ManifestLine("Title")
 		end,
+		GetTotalUserAddOnSavedVariablesDiskCapacityMB = function() return StorageCapacityMB end,
+		GetTotalUserAddOnSavedVariablesDiskUsageMB = function() return StorageUsedMB end,
+		GetUserAddOnSavedVariablesDiskUsageMB = function(_, index) return StorageMineMB end,
 	}
 end
 

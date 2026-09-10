@@ -99,6 +99,12 @@ want to lose to the expiry clock can have its text copied somewhere that never e
 　が自前の画面をアドオンのフレームの上で組むことになり、「送る」ボタンが動かなくなります
 　（実機で確認済みです）。ボタン1回ぶんの手間は、その代わりの安全です。
 
+■ 保存領域の空き表示
+
+　メール画面の下部に、アドオンの保存領域の空き容量と、本アドオンの使用量を表示します。
+　手紙を溜める機能なので、どれだけ余裕があるかが見えるようにしてあります。残りが1割を切ると
+　赤字になります。/pbmail disk でも同じ内容を表示できます。
+
 ■ 保存件数
 
 　下書きは初期値50件、送信済みは初期値100件、重要は初期値100件。いずれも設定で1〜1000件に
@@ -224,6 +230,13 @@ boxes that are missing, as tabs beside them.
 　last step is deliberate: an add-on that changes the tab for you makes the client rebuild its
 　own screen on top of an add-on frame, and the Send button then stops working. Measured on a
 　console. One button press is the price of not doing that.
+
+■ Room left for saved data
+
+　Along the bottom of the mail window: how much of the console's add-on storage allowance is
+　free, and how much of it this add-on is using. Three boxes of letters is a thing that grows,
+　and the allowance is shared with every other add-on. It turns red under a tenth left, and
+　/pbmail disk says the same.
 
 ■ How much it keeps
 

@@ -792,6 +792,32 @@ checkContains("a box nobody named", Command("max nonsense 10"), "Which box")
 checkContains("a number that is not one", Command("max drafts lots"), "How many")
 check("and neither changed anything", addon.drafts:Max(), addon.LIMIT_FLOOR)
 
+-- ---- how much room is left for saved data ------------------------------------------------
+--
+-- The figures come off the add-on manager as methods, not as global functions, and a client
+-- that does not offer them at all has to leave the line out rather than draw a blank one.
+
+Reset()
+StorageCapacityMB, StorageUsedMB, StorageMineMB = 5, 1.25, 0.25
+
+local line, low = addon:StorageLine()
+checkContains("the free figure is what is left, not what is used", line, "3.8")
+checkContains("out of the whole allowance", line, "5.0")
+checkContains("and this add-on's own share is named", line, "0.2")
+check("with room to spare, nothing is flagged", low, false)
+
+checkContains("the command says it too", Command("disk"), "3.8")
+
+StorageUsedMB = 4.8
+local _, tight = addon:StorageLine()
+check("under a tenth left is flagged", tight, true)
+
+StorageAnswers = false
+check("a client that will not say gets no line at all", addon:StorageLine(), nil)
+checkContains("and the command says so plainly", Command("disk"), "does not say")
+StorageAnswers = true
+StorageUsedMB = 1.25
+
 -- ---- result ----------------------------------------------------------------------------
 
 print("")

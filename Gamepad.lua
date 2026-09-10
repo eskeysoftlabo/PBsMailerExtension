@@ -60,6 +60,66 @@ local gamepad = {}
 addon.gamepadUI = gamepad
 
 -- ---------------------------------------------------------------------------------------
+-- The line along the bottom
+--
+-- How much room is left for saved data, in the space the mail window leaves empty at the
+-- bottom of its right-hand pane. Its fragment goes on the scene rather than on a tab, so it is
+-- there on the inbox and the send page too.
+--
+-- The figures are what is on disk and only move when the game writes saved variables out, so
+-- there is nothing to poll: it is filled in when the mail window opens.
+-- ---------------------------------------------------------------------------------------
+
+local storage = nil
+local storageFailed = false
+
+local function BuildStorageLine()
+	if storage or storageFailed then
+		return storage
+	end
+
+	local built = {}
+	local ok = pcall(function()
+		local pane = CreateControlFromVirtual("PBsMailerExtensionStorage", ZO_Mail_Gamepad_TopLevel, "ZO_GamepadGrid_NavQuadrant_2_3_4_Anchors")
+		local container = CreateControlFromVirtual("$(parent)Container", pane, "ZO_GamepadGrid_NavQuadrant_ContainerAnchors")
+
+		local line = CreateControlFromVirtual("$(parent)Line", container, "PBsMailerExtension_Storage_Gamepad")
+		line:ClearAnchors()
+		line:SetAnchor(BOTTOMLEFT, container, BOTTOMLEFT, 0, -8)
+		line:SetAnchor(BOTTOMRIGHT, container, BOTTOMRIGHT, 0, -8)
+
+		built.text = line:GetNamedChild("Text")
+		assert(built.text)
+
+		built.fragment = ZO_FadeSceneFragment:New(pane)
+	end)
+
+	if not ok or not built.fragment then
+		storageFailed = true
+		return nil
+	end
+
+	storage = built
+	return storage
+end
+
+function gamepad:RefreshStorage()
+	local built = BuildStorageLine()
+	if not built then
+		return false
+	end
+
+	local text, low = addon:StorageLine()
+	if not text then
+		built.text:SetText("")
+		return false
+	end
+
+	built.text:SetText(low and ("|cC74A4A" .. text .. "|r") or text)
+	return true
+end
+
+-- ---------------------------------------------------------------------------------------
 -- A tab
 --
 -- The drafts box and the sent box are the same tab twice: a list of letters on the left, the
@@ -631,6 +691,14 @@ function gamepad:Initialize()
 	if MAIL_GAMEPAD_SCENE and MAIL_GAMEPAD_SCENE.RegisterCallback then
 		MAIL_GAMEPAD_SCENE:RegisterCallback("StateChange", function(_, newState)
 			if newState == SCENE_SHOWING then
+				-- The disk figures are read here rather than watched: they only move when the
+				-- game writes saved variables out.
+				local line = BuildStorageLine()
+				if line and MAIL_GAMEPAD_SCENE.AddFragment then
+					MAIL_GAMEPAD_SCENE:AddFragment(line.fragment)
+				end
+				self:RefreshStorage()
+
 				local added = false
 				for _, tab in ipairs(self:Tabs()) do
 					added = tab:Add() or added

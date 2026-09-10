@@ -75,6 +75,8 @@ local function ReadManifestVersion()
 	for index = 1, manager:GetNumAddOns() do
 		local name, title = manager:GetAddOnInfo(index)
 		if name == addon.name and title then
+			-- Kept for the disk figures below, which are asked for by add-on index.
+			addon.addOnIndex = index
 			local plain = title:gsub("|c%x%x%x%x%x%x", ""):gsub("|r", "")
 			return plain:match("([%d]+[%d%.]*)%s*$") or ""
 		end
@@ -135,6 +137,87 @@ addon.Say = Say
 addon.Line = Line
 addon.Print = Print
 addon.Format = Format
+
+-- ---------------------------------------------------------------------------------------
+-- How much room is left for saved data
+--
+-- On console every add-on's saved variables share one allowance, and three boxes of letters is
+-- a thing that grows. The client will tell us where that stands -- but through the add-on
+-- manager, as methods, not as global functions:
+--
+--     AddOnManager:GetTotalUserAddOnSavedVariablesDiskCapacityMB()
+--     AddOnManager:GetTotalUserAddOnSavedVariablesDiskUsageMB()
+--     AddOnManager:GetUserAddOnSavedVariablesDiskUsageMB(addOnIndex)
+--
+-- The numbers are what is on disk, so they move when the game writes saved variables out --
+-- at a reload or a logout -- and not while a letter is being saved. There is nothing to poll.
+-- ---------------------------------------------------------------------------------------
+
+local LOW_STORAGE_FRACTION = 0.1
+
+function addon:Storage()
+	local manager = GetAddOnManager and GetAddOnManager()
+	if not manager or not manager.GetTotalUserAddOnSavedVariablesDiskUsageMB then
+		return nil
+	end
+
+	local ok, capacity, used, mine = pcall(function()
+		local capacityMB = manager.GetTotalUserAddOnSavedVariablesDiskCapacityMB
+			and manager:GetTotalUserAddOnSavedVariablesDiskCapacityMB() or 0
+		local usedMB = manager:GetTotalUserAddOnSavedVariablesDiskUsageMB() or 0
+		local mineMB
+		if self.addOnIndex and manager.GetUserAddOnSavedVariablesDiskUsageMB then
+			mineMB = manager:GetUserAddOnSavedVariablesDiskUsageMB(self.addOnIndex)
+		end
+		return capacityMB, usedMB, mineMB
+	end)
+
+	if not ok then
+		return nil
+	end
+
+	capacity = capacity or 0
+	used = used or 0
+
+	local free = capacity > 0 and (capacity - used) or nil
+	if free and free < 0 then
+		free = 0
+	end
+
+	return {
+		capacity = capacity,
+		used = used,
+		mine = mine,
+		free = free,
+		low = free ~= nil and capacity > 0 and (free / capacity) < LOW_STORAGE_FRACTION,
+	}
+end
+
+local function MB(value)
+	return string.format("%.1f", value or 0)
+end
+
+-- One line, for the bottom of the mail window and for the command. Nil when the client will
+-- not answer, so the line is left out rather than drawn saying nothing.
+function addon:StorageLine()
+	local storage = self:Storage()
+	if not storage then
+		return nil, false
+	end
+
+	local text
+	if storage.free then
+		text = Format(SI_PBSMX_STORAGE_FREE, MB(storage.free), MB(storage.capacity))
+	else
+		text = Format(SI_PBSMX_STORAGE_USED, MB(storage.used))
+	end
+
+	if storage.mine then
+		text = text .. " " .. Format(SI_PBSMX_STORAGE_MINE, MB(storage.mine))
+	end
+
+	return text, storage.low
+end
 
 -- ---------------------------------------------------------------------------------------
 -- Limits
@@ -262,6 +345,7 @@ function addon:PrintHelp()
 	Line(GetString(SI_PBSMX_HELP_MAX))
 	Line(GetString(SI_PBSMX_HELP_AUTOSAVE))
 	Line(GetString(SI_PBSMX_HELP_ONSEND))
+	Line(GetString(SI_PBSMX_HELP_DISK))
 	Line(GetString(SI_PBSMX_HELP_WHERE))
 end
 
@@ -463,6 +547,12 @@ function addon:HandleCommand(argumentString)
 			return
 		end
 		Print(self:DeleteDraftOnSend() and GetString(SI_PBSMX_ONSEND_ON) or GetString(SI_PBSMX_ONSEND_OFF))
+		return
+	end
+
+	if command == "disk" or command == "storage" then
+		local line = self:StorageLine()
+		Print(line or GetString(SI_PBSMX_STORAGE_UNKNOWN))
 		return
 	end
 

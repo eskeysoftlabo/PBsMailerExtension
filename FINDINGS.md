@@ -425,6 +425,37 @@ Which mail is being looked at comes from `MAIL_INBOX:GetOpenMailId()` and
 `ZO_MailInbox_Gamepad:GetActiveMailId()` — both return a value out of a table, so neither is the
 kind of call §9 is about.
 
+
+## 11. How much saved-variable room is left, and who to ask
+
+**From source.** The console's add-on storage allowance is readable, but the calls are **methods
+on the add-on manager**, not global functions -- which is the only thing about them that catches
+anybody out:
+
+```lua
+local manager = GetAddOnManager()
+manager:GetTotalUserAddOnSavedVariablesDiskCapacityMB()   -- the whole allowance
+manager:GetTotalUserAddOnSavedVariablesDiskUsageMB()      -- what every add-on is using
+manager:GetUserAddOnSavedVariablesDiskUsageMB(addOnIndex) -- what one add-on is using
+manager:GetTotalUnusedAddOnSavedVariablesDiskUsageMB()    -- left behind by add-ons since removed
+```
+
+The client's own gamepad add-on manager uses them exactly this way
+(`pregameandingame/addons/gamepad/zo_addonmanager_gamepad.lua`), and its
+`SI_GAMEPAD_ADDON_MENU_DISK_USAGE_FORMATTER` reads "Disk Usage: <<1>> MB/<<2>> MB".
+
+The `addOnIndex` is the manager's own enumeration index, so it comes from the same walk of
+`GetNumAddOns` / `GetAddOnInfo` that already reads this add-on's version out of its title.
+
+**The figures are what is on disk.** They move when the game writes saved variables out -- at a
+reload or a logout -- not as letters are saved, so there is nothing to poll: reading them when
+the mail window opens is enough.
+
+Where the line goes: both the inbox and the send page inset their own view 120 pixels from the
+bottom of the right-hand pane's container, so that strip is empty on every tab. The line is a
+fragment on the mail scene rather than on a tab, which puts it on the inbox and the send page
+too.
+
 ---
 
 ## Measured
